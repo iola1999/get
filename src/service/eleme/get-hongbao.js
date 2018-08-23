@@ -137,6 +137,10 @@ module.exports = async (req, res) => {
           case 5:
             // 没次数了，有可能是手机号没次数了，也有可能是 cookie 没次了
             // 如果是自己的号领的，没次了，直接提示
+           
+            
+            // TODO:换下一条 cookie，重试几次
+
             if (phone === mobile) {
               return response(
                 9,
@@ -155,7 +159,7 @@ module.exports = async (req, res) => {
         if (data.promotion_records.length === 0 || number <= 0) {
           const lucky = data.promotion_records[query.lucky_number - 1];
           logger.info('手气最佳红包已被领取 %j', lucky);
-
+          // FIXME:如果第一条 cookie 被私用完了次数，会误判已被领取
           // 还是取不到，可能是因为领完了，不会返回数组了
           if (!lucky) {
             return response(0, '手气最佳红包已被领取', {
