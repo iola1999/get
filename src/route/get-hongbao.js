@@ -6,6 +6,7 @@ const eleme = require('../service/eleme/get-hongbao');
 const meituan = require('../service/meituan/get-hongbao');
 
 router.post('/', async (req, res, next) => {
+  const startTime = Date.now();
   try {
     let {url, mobile, limit, application, cookies} = req.body;
     if (typeof cookies === 'string') {
@@ -28,6 +29,7 @@ router.post('/', async (req, res, next) => {
     logger.error(e);
     res.json({code: -2, message: _.get(e, 'response.data.message', '网络繁忙，请稍后重试')});
   }
+  logger.info(`耗时 ${(Date.now() - startTime) / 1000}s`);
 });
 
 module.exports = router;

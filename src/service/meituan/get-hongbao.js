@@ -20,10 +20,6 @@ module.exports = async (req, res) => {
     return response(2, '请填写 11 位手机号码');
   }
 
-  if (url.indexOf('waimai.meituan.com') === -1) {
-    return response(3, '美团红包链接不正确');
-  }
-
   let params;
   try {
     params = parseUrl(url);
@@ -46,6 +42,8 @@ module.exports = async (req, res) => {
 
   let index = 0;
   let length = 0;
+  let number = 99;
+
   (async function lottery(userPhone2) {
     if (mobile === NO_MOBILE && number === 1) {
       return response(99, '已领取到最佳前一个红包。下一个是最大红包，请手动打开红包链接领取');
@@ -138,7 +136,7 @@ module.exports = async (req, res) => {
       return;
     }
 
-    const number = lucky - length;
+    number = lucky - length;
     if (number <= 0) {
       // const best = gsc2.data.wxCoupons.find(w => w.bestLuck) || {}
       const best = gsc2.data.wxCoupons[lucky - 1] || {};

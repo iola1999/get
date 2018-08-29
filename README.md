@@ -10,36 +10,53 @@ https://www.mtdhb.com 红包核心领取逻辑，需配合 [mtdhb/api](https://g
 
 Node.js 9.x
 
+```bash
+npm i -g yarn
+```
+
+## 代理
+
+[src/service/proxy-server.js](src/service/proxy-server.js)
+
 ## 开发
 
 ```bash
-npm i
-npm run dev
+yarn
+yarn dev
 ```
 
 ## 生产
 
-* 配置代理服务器
-
-请修改 [src/service/proxy-server.js](src/service/proxy-server.js)
-
-如果只有一个代理，也可以配置服务器环境变量
+### 首次部署
 
 ```bash
-export PROXY_HOST=ip
-export PROXY_PORT=port
+git clone https://github.com/mtdhb/get.git mtdhb-get
+cd mtdhb-get
+yarn global add pm2
+yarn
+yarn start
 ```
 
-* 首次部署
+### 代码更新
 
 ```bash
-npm i pm2 -g
-npm i
-npm start
+#!/bin/bash
+
+cd mtdhb-get
+export MOBILE_LIST=src/service/eleme/core/mobile-list.json
+export MOBILE_LIST_BAK=$MOBILE_LIST.bak
+cp $MOBILE_LIST $MOBILE_LIST_BAK
+git fetch origin master
+git reset --hard FETCH_HEAD
+cp $MOBILE_LIST_BAK $MOBILE_LIST
+yarn
+yarn reload
 ```
 
-* 代码更新
+将以上内容存为 `*.sh`，并设置脚本执行权限。可放在 webhook 中，当代码 push 到远程时自动更新
 
-```bash
-npm run reload
-```
+### 查看日志，内存信息等
+
+请查看 pm2 文档 https://www.npmjs.com/package/pm2
+
+另外在 `log/` 目录也将按照日期输出每天的日志

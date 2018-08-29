@@ -1,2 +1,3 @@
 package.json
 src/**/rohr*
+src/service/eleme/core/mobile-list.json

@@ -29,7 +29,7 @@ module.exports = class Request {
     });
   }
 
-  async lucky({theme_id}) {
+  async lucky({theme_id = '0'}) {
     const {data = {}} = await this.http.get(`/restapi/marketing/themes/${theme_id}/group_sns/${this.sn}`);
     return data;
   }
