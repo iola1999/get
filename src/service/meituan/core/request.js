@@ -22,10 +22,57 @@ module.exports = class Request {
       transformRequest: [data => querystring.stringify(data)],
       proxy: proxyServer()
     });
+    this.mpHttp = axios.create({
+      baseURL: origin,
+      timeout: 3000,
+      headers: {
+        origin,
+        referer:
+          "https://servicewechat.com/wx2c348cf579062e56/138/page-frame.html",
+        "X-Requested-With": "XMLHttpRequest",
+        "user-agent":
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16A405 MicroMessenger/6.7.4(0x1607042c) NetType/WIFI Language/zh_CN"
+      },
+      transformRequest: [data => querystring.stringify(data)],
+      proxy: proxyServer()
+    });
+  }
+
+  async getShareCouponMp({
+    channelUrlKey,
+    baseChannelUrlKey = channelUrlKey,
+    urlKey,
+    token
+  }) {
+    logger.info("getShareCouponMp");
+    // 4201 需要验证码
+    // 1006 该号码归属地暂不支持
+    // 1 成功
+    // 811 姿势不对 再来一次
+    // 2001 活动未开始
+    // 7001 今日领取次数已用完
+    // 7003 已领过
+    // 4000 抢光了
+    // 7002 微信 cookie 不正确或失效
+    // 7006 今日领取次数达达到上限
+    // 4002 你已经抢过这个红包了
+    // 4001 已过期（不知道是什么过期，我认为是红包，所以直接抛出了）
+    // 4003 没领到（什么鬼）
+    try {
+      return this.mpHttp.post("/wechatapp/share/coupon/receive", {
+        channelUrlKey,
+        baseChannelUrlKey,
+        urlKey,
+        token
+      });
+    } catch (e) {
+      logger.error(e.message);
+      return {};
+    }
   }
 
   async getShareCoupon({ phone, channelUrlKey, urlKey, url, dparam, cookie }) {
-    logger.info(`使用 ${phone} 尝试领取`);
+    logger.info(`getShareCoupon: 使用 ${phone} 尝试领取`);
     // 4201 需要验证码
     // 1006 该号码归属地暂不支持
     // 1 成功

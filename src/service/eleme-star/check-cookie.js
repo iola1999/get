@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     if (!res || !res.openid || !res.phone) {
       return response(
         3,
-        "饿了么星选贡献失败，请确保小号已经微信授权并绑定手机号"
+        "饿了么星选贡献失败，请确认小号已经微信授权并绑定手机号。如果一直贡献不上，请联系管理员"
       );
     }
 

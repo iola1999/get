@@ -4,10 +4,29 @@ const logger = require("../../../util/logger")("service/eleme");
 
 const origin = "https://h5.ele.me";
 const referer = `${origin}/hongbao/`;
+// 欢迎提交你的头像和昵称，让你在 mtdhb 领取时只要红包链接末尾带上 &_from=xxx 即可显示你设定的头像昵称
+const from = {
+  mtdhb: {
+    avatar:
+      "https://thirdqq.qlogo.cn/qqapp/101204453/029FDD924217DE97C2C674DB60B7B9D5/40",
+    username: "mtdhb.org"
+  },
+  botii: {
+    avatar:
+      "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTK84xyzRypsXulol2CNh1EFNWltJdHmHJrf5KPjrvmzA6rJgR8lgb66pAhbbR0ibUN0eBNCd8yN8Cw/132",
+    username: "我肯定不吃夜宵啊"
+  },
+  xzk: {
+    avatar:
+      "https://thirdqq.qlogo.cn/qqapp/101204453/C2DC2E32ED38EA9185FBE11115286957/40",
+    username: "小展开"
+  }
+};
 
 module.exports = class Request {
-  constructor({ sn }) {
+  constructor({ sn, _from = "mtdhb" }) {
     this.sn = sn;
+    this.from = from[_from] || from.mtdhb;
     this.http = axios.create({
       baseURL: origin,
       withCredentials: true,
@@ -21,8 +40,8 @@ module.exports = class Request {
       },
       transformRequest: [
         (data, headers) => {
-          headers["x-shared"] =
-            headers["x-shared"] || `eosid=${parseInt(sn, 16)}`;
+          headers["x-shard"] =
+            headers["x-shard"] || `eosid=${parseInt(sn, 16)}`;
           return JSON.stringify(data);
         }
       ],
@@ -30,7 +49,7 @@ module.exports = class Request {
     });
   }
 
-  async lucky({ theme_id = "1" }) {
+  async lucky({ theme_id = "0" }) {
     for (const item of [theme_id, "1969", "2769"]) {
       try {
         const { data } = await this.http.get(
@@ -72,9 +91,8 @@ module.exports = class Request {
         sign,
         track_id: "",
         unionid: "fuck", // 别问为什么传 fuck，饿了么前端就是这么传的
-        weixin_avatar:
-          "http://thirdqq.qlogo.cn/qqapp/101204453/BC8AA42E86ED825455B5895212AE7917/40",
-        weixin_username: "mtdhb.org"
+        weixin_avatar: this.from.avatar,
+        weixin_username: this.from.username
       },
       {
         headers: {

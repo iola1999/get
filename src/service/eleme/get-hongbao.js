@@ -63,13 +63,12 @@ module.exports = async (req, res) => {
     } catch (e) {
       if (e.response) {
         data = e.response.data;
-        if (
-          data &&
-          ["SNS_UID_CHECK_FAILED", "PHONE_IS_EMPTY", "UNAUTHORIZED"].includes(
-            data.name
-          )
-        ) {
-          cookie.status = CookieStatus.INVALID;
+        if (data) {
+          if (["SNS_UID_CHECK_FAILED", "UNAUTHORIZED"].includes(data.name)) {
+            cookie.status = CookieStatus.INVALID;
+          } else if ("PHONE_IS_EMPTY" === data.name) {
+            cookie.status = CookieStatus.SUSPEND;
+          }
         }
         if (
           [400, 401, 500].includes(e.response.status) &&
@@ -90,12 +89,10 @@ module.exports = async (req, res) => {
 
     // 有错误
     if (data.name) {
-      if (
-        ["SNS_UID_CHECK_FAILED", "PHONE_IS_EMPTY", "UNAUTHORIZED"].includes(
-          data.name
-        )
-      ) {
+      if (["SNS_UID_CHECK_FAILED", "UNAUTHORIZED"].includes(data.name)) {
         cookie.status = CookieStatus.INVALID;
+      } else if ("PHONE_IS_EMPTY" === data.name) {
+        cookie.status = CookieStatus.SUSPEND;
       }
       return lottery();
     }

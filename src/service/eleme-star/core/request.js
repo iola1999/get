@@ -44,29 +44,32 @@ module.exports = class Request {
       logger.error(e.message);
       res = e.response.data;
     }
-    res = JSON.parse(
-      this.getCenter(
-        res,
-        `require('mactivity:widget/redEnvelope/giftPackage/giftPackage').init(`,
-        `);\n}catch(e){console.error(e)}}();`
-      )
-    );
-    const { result } = res;
-    if (!result || typeof result.share !== "object") {
-      return null;
-    }
 
     logger.info("饿了么星选 页面信息", res);
 
-    const luckyNumber = Number(
-      this.getCenter(result.share.share_title, `【饿了么星选】第`, "个领取")
+    res = this.getCenter(
+      res,
+      `require('mactivity:widget/redEnvelope/giftPackage/giftPackage').init(`,
+      `);\n}catch(e){console.error(e)}}();`
     );
 
-    // logger.info(result.share.share_title);
+    if (!res) {
+      return null;
+    }
 
-    // "status": 5,
-    //   "msg": "这是您已抢过的红包哦~",
-    // logger.info(result.friends_info);
+    res = JSON.parse(res);
+
+    const { result } = res;
+    if (!result) {
+      return null;
+    }
+
+    let luckyNumber;
+    if (result.share) {
+      luckyNumber = Number(
+        this.getCenter(result.share.share_title, `【饿了么星选】第`, "个领取")
+      );
+    }
 
     return {
       ...result,
