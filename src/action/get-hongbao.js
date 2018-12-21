@@ -4,11 +4,11 @@ const meituan = require("../service/meituan/get-hongbao");
 const elemeStar = require("../service/eleme-star/get-hongbao");
 
 module.exports = async (req, res, next) => {
-  const { application, cookies } = req.body;
+  let { application, cookies, url, limit, mobile } = req.body;
   if (typeof cookies === "string") {
-    req.body.cookies = JSON.parse(cookies);
+    cookies = req.body.cookies = JSON.parse(cookies);
   }
-  logger.info(req.body);
+  logger.info({ application, cookies: cookies.length, url, limit, mobile });
   const action = [meituan, eleme, elemeStar][application];
   if (!action) {
     return res.json({ code: -1, message: "application 不合法" });
