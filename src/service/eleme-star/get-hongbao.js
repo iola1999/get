@@ -22,6 +22,9 @@ module.exports = async (req, res) => {
         "请求饿了么服务器失败，请重试。如果重试仍然不行，请换一个饿了么链接再来"
       );
     }
+    if (infoRes.status === 2) {
+      cookies[0].status = CookieStatus.SUCCESS;
+    }
     if (infoRes.status === 4) {
       return response(6, "该红包已被抢完，请换一个链接再来");
     }
