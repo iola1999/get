@@ -14,10 +14,12 @@ module.exports = async (req, res) => {
   }
 
   // // 某些地方复制出的链接带 &amp; 而不是 &
+  // 饿了么四月底改动，部分链接应使用 ? 截断
   // // 饿了么链接是 # 后面做参数，所以截后面操作
   const query = querystring.parse(
     String(url)
       .replace(/&amp;/g, "&")
+      .replace(/hongbao\/\?/, "hongbao/#")
       .split("#")[1]
   );
 
